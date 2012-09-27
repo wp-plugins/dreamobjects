@@ -19,7 +19,7 @@
 
 //DHDOU::backup()
         include_once( PLUGIN_DIR. '/lib/S3.php');
-		$sections = get_option('dh-do-section');
+		$sections = get_option('dh-do-backupsection');
 		if ( !$sections ) {
 			$sections = array();
 		}
@@ -38,7 +38,7 @@
 				<form method="post" action="options.php">
 					<input type="hidden" name="action" value="update" />
 					<?php wp_nonce_field('update-options'); ?>
-					<input type="hidden" name="page_options" value="dh-do-bucket,dh-do-section,dh-do-schedule" />
+					<input type="hidden" name="page_options" value="dh-do-bucket,dh-do-backupsection,dh-do-schedule" />
 
 <table class="form-table">
     <tbody>
@@ -57,23 +57,25 @@
 								<?php endforeach; ?>
 							</select>
             <p class="description"><?php _e('Select from pre-existing buckets.', dreamobjects); ?></p>
-            
-            <p class="description"><?php _e('Or create a bucket:', dreamobjects); ?></p>
-            <input type="text" name="dh-do-newbucket" id="new-s3-bucket" value="" />
+            <?php if ( get_option('dh-do-bucketcdn') && ( !get_option('dh-do-bucketcdn') || (get_option('dh-do-bucketcdn') != "XXXX") ) ) { 
+                $alreadyusing = sprintf(__('You are current using the bucket "%s" for CDN. While you can reuse this bucket, it would be best not to.', dreamobjects), get_option('dh-do-bucket')  );
+                echo '<p class="description">' . $alreadyusing . '</p>';
+            } ?>            
+
             </td>
         </tr>
 
-<?php if ( !get_option('dh-do-bucket') || (get_option('dh-do-bucket') != "XXXX") ) : ?>
+<?php if ( get_option('dh-do-bucket') && (get_option('dh-do-bucket') != "XXXX") && !is_null(get_option('dh-do-bucket')) ) : ?>
 
         <tr valign="top">
             <th scope="row"><label for="dh-do-what"><?php _e('What to Backup', dreamobjects); ?></label></th>
             <td>
-								<p><label for="dh-do-section-files">
-								<input <?php if ( in_array('files', $sections) ) echo 'checked="checked"' ?> type="checkbox" name="dh-do-section[]" value="files" id="dh-do-section-files" />
+								<p><label for="dh-do-backupsection-files">
+								<input <?php if ( in_array('files', $sections) ) echo 'checked="checked"' ?> type="checkbox" name="dh-do-backupsection[]" value="files" id="dh-do-backupsection-files" />
 								<?php _e('All Files', dreamobjects); ?>
 							</label><br />
-							<label for="dh-do-section-database">
-								<input <?php if ( in_array('database', $sections) ) echo 'checked="checked"' ?> type="checkbox" name="dh-do-section[]" value="database" id="dh-do-section-database" />
+							<label for="dh-do-backupsection-database">
+								<input <?php if ( in_array('database', $sections) ) echo 'checked="checked"' ?> type="checkbox" name="dh-do-backupsection[]" value="database" id="dh-do-backupsection-database" />
 								<?php _e('Database', dreamobjects); ?>
 							</label><br />
 						</p>

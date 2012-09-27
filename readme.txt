@@ -3,7 +3,7 @@ Contributors: Ipstenu,DanCoulter
 Tags: cloud, dreamhost, dreamobjects
 Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 
+Stable tag: 1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,7 +22,8 @@ DreamObjects™ is an inexpensive, scalable object storage service that was deve
 * Provides <a href="https://github.com/wp-cli/wp-cli#what-is-wp-cli">wp-cli</a> hooks to do the same
 
 = To Do =
-* CDN hook up
+* Permit uploads/downloads
+* CDN (when available)
 
 == Installation ==
 
@@ -60,12 +61,9 @@ If you have <a href="https://github.com/wp-cli/wp-cli#what-is-wp-cli">wp-cli</a>
 
 <pre>wp dreamobjects backup</pre>
 
-
-
 == Screenshots ==
 1. Your DreamObjects Public Key
 1. DreamObjects Private Key
-
 
 == Changelog ==
 
