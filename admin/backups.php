@@ -99,10 +99,10 @@ if ( get_option('dh-do-bucket') && (get_option('dh-do-bucket') != "XXXX") && !is
 				</select>
 				<?php
                   $timestamp = wp_next_scheduled( 'dh-do-backup' ); 
-                  $nextbackup = sprintf(__('Next scheduled backup is at %s', dreamobjects), get_date_from_gmt( date('Y-m-d H:i:s', $timestamp) , 'F j, Y h:i a' ) );
+                  $nextbackup = sprintf(__('Next scheduled backup is at %s', dreamobjects), get_date_from_gmt( date_i18n('Y-m-d H:i:s', $timestamp) , 'F j, Y h:i a' ) );
             ?>
             <p class="description"><?php _e('How often do you want to backup your files? Daily is recommended.', dreamobjects); ?></p>
-            <?php if ( get_option('dh-do-schedule') != "disabled" ) {?>
+            <?php if ( get_option('dh-do-schedule') != "disabled" && wp_next_scheduled('dh-do-backup') ) { ?>
             <p class="description"><?php echo $nextbackup; ?></p>
             <?php } // Show next scheduled ?>
 				</td>
@@ -152,7 +152,7 @@ if ( get_option('dh-do-bucket') && (get_option('dh-do-bucket') != "XXXX") && !is
         krsort($backups);
         $count = 0;
         foreach ($backups as $object) {
-            $object['label'] = sprintf(__('WordPress Backup from %s', dreamobjects), get_date_from_gmt( date('Y-m-d H:i:s', $object['time']) , 'F j, Y h:i a' ) );
+            $object['label'] = sprintf(__('WordPress Backup from %s', dreamobjects), date_i18n('F j, Y h:i a', $object['time']) );
             $object = apply_filters('dh-do-backup-item', $object);
 								
 			if ( ($num_backups != 'WP') && ( ++$count > $num_backups) ) break;
@@ -170,10 +170,11 @@ if ( get_option('dh-do-bucket') && (get_option('dh-do-bucket') != "XXXX") && !is
     <h3><?php _e('Backup ASAP!', dreamobjects); ?></h3>
     <p><?php _e('Oh you really want to do a backup right now? Schedule your backup to start in a minute. Be careful! This may take a while, and slow your site down, if you have a big site.', dreamobjects); ?></p>
 
-    <?php $timestamp = wp_next_scheduled( 'dh-do-backup' ); 
-            $nextbackup = sprintf(__('Keep in mind, your next scheduled backup is at %s', dreamobjects), get_date_from_gmt( date('Y-m-d H:i:s', $timestamp) , 'F j, Y h:i a' ) ); 
-            ?>
-    <?php if ( get_option('dh-do-schedule') != "disabled" ) {?>
+    <?php
+     	$timestamp = wp_next_scheduled( 'dh-do-backup' ); 
+        $nextbackup = sprintf(__('Keep in mind, your next scheduled backup is at %s', dreamobjects), date_i18n('F j, Y h:i a', $timestamp) ); 
+    ?>
+    <?php if ( get_option('dh-do-schedule') != "disabled" && wp_next_scheduled('dh-do-backup') ) {?>
     <p><?php echo $nextbackup; ?></p>
     <?php } ?>
 
@@ -181,7 +182,7 @@ if ( get_option('dh-do-bucket') && (get_option('dh-do-bucket') != "XXXX") && !is
     <p class="submit"><input class='button-primary' type='Submit' name='backup' value='<?php _e("Backup ASAP", dreamobjects); ?>' id='submitbutton' /></p>
                 </form>
             <?php
-        } else {    
+        } else {
         ?><p><?php _e('Until you connect to a bucket, you can\'t see anything here.', dreamobjects); ?></p><?php
         }
 
