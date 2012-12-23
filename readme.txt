@@ -3,7 +3,7 @@ Contributors: Ipstenu, DanCoulter
 Tags: cloud, dreamhost, dreamobjects
 Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 2.0
+Stable tag: 2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -111,6 +111,7 @@ Dec 21, 2012 by Ipstenu
 * Made a change to how times are generated using current_time correctly, vs time (props Regan, a DreamHost customer, for letting me log into your site!)
 * Changed date() to date_i18n() (thank you @Rarst for your 'tsk' - it lights a fire)
 * Cleaning up debug errors
+* Fixed uninstall
 
 = Version 2.0 =
 Nov 1, 2012 by Ipstenu
