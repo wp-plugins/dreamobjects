@@ -1,4 +1,4 @@
-=== DreamObjects Plugin ===
+=== DreamObjects Connection ===
 Contributors: Ipstenu, DanCoulter
 Tags: cloud, dreamhost, dreamobjects
 Requires at least: 3.4
@@ -11,9 +11,9 @@ Connect your WordPress site to DreamHost's DreamObjects
 
 == Description ==
 
-DreamHost has its own Cloud - <a href="http://dreamhost.com/cloud/dreamobjects/">DreamObjects</a>.
+DreamHost has its own Cloud - <a href="http://dreamhost.com/cloud/dreamobjects/">DreamObjects™</a> - an inexpensive, scalable object storage service that was developed from the ground up to provide a reliable, flexible cloud storage solution for entrepreneurs and developers. It provides a perfect, scalable storage solution for your WordPress site.
 
-DreamObjects™ is an inexpensive, scalable object storage service that was developed from the ground up to provide a reliable, flexible cloud storage solution for entrepreneurs and developers. It provides a perfect, scalable storage solution for your WordPress site.
+Well now that we've gotten the sales-pitch out of the way, DreamObjects Connections will plugin your WordPress site into DreamObjects, tapping into the amazing power of automated backups, fileuploaders, and more!
 
 = Backup Features =
 * Automatically backs up your site (DB and files) to your DreamObjects cloud on a daily, weekly, or monthly schedule.
@@ -28,7 +28,6 @@ DreamObjects™ is an inexpensive, scalable object storage service that was deve
 = To Do =
 * CDN (when available)
 * Better <code>[dreamobjects]</code> support for folders
-* Logging
 
 == Installation ==
 
@@ -48,61 +47,79 @@ DreamObjects™ is an inexpensive, scalable object storage service that was deve
 
 == Frequently asked questions ==
 
-= What does it do? =
+= General Questions =
 
-DreamObjects connects your WordPress site to your DreamObjects cloud storage, allowing you to upload files directly to your cloud, or automatically store backups.
+<strong>What does it do?</strong>
 
-= Do I have to use DreamHost? =
+DreamObjects Connection connects your WordPress site to your DreamObjects cloud storage, allowing you to upload files directly to your cloud, or automatically store backups.
 
-Yes and no. You have to use Dream<em>Objects</em>, which belongs to Dream<em>Host</em>. This plugin was built on and specifically for DreamHost servers, so there's no assurance it'll work on other hosts.
+<strong>Do you work for DreamHost?</strong>
 
-= Can I use this on a Windows Server? =
+Yes, but this isn't an official DreamHost plugin at this time. It just works.
+
+<strong>Do I have to host my  DreamHost?</strong>
+
+Yes and no. You have to use Dream<em>Objects</em>, which belongs to Dream<em>Host</em>. This plugin was built on and specifically for DreamHost servers, so I can give you no assurance it'll work on other hosts.
+
+<strong>Can I use this on a Windows Server?</strong>
 
 You can try, and let me know how it goes. I built this for DreamHost, so it has only been tested on Linux boxes.
 
-= How often can I schedule backups? =
+<strong>Can I use this on Multisite?</strong>
 
-You can schedule them daily, weekly, or monthly.
+Not at this time. Backups for Multisite are a little messier, and I'm not sure how I want to handle that yet.
 
-= Can I force a backup to run now? =
+<strong>How big a site can this back up?</strong>
 
-Yep! It actually sets it to run in 60 seconds, but works out the same.
+I don't know. Presumably as large as your server memory can handle, which I know is a terrible answer. Remember you're using WordPress to run backups here, so you're at the mercy of a middle-man. The code itself can handle any size, but once you hit a few hundred megs, you may run into problems.
 
-= How long does it keep backups for? =
-
-Since you get charged on space used for DreamObjects, the default is to retain the last 15 backups. If you need more, you can save up to 90 backups, however that's rarely needed.
-
-= Can I keep them forever? =
-
-If you chose 'all' then yes, however this is not recommended. DreamObjects (like most S3/cloud platforms) charges you based on space and bandwidth, so if you have a large amount of files stored, you will be charged more money.
-
-= Who can upload files? =
-
-Anyone who can upload media can upload files, so this generally covers Authors and up. Only the Administrators can set the upload bucket, however.
-
-= How do I use the CLI? =
-If you have <a href="https://github.com/wp-cli/wp-cli#what-is-wp-cli">wp-cli</a> installed on your server (which DreamHost servers do), you can use the following commands:
-
-<pre>wp dreamobjects backup</pre>
-
-= Where's the Database in the zip? =
+<strong>Where's the Database in the zip?</strong>
 
 I admit, it's in a weird spot: /wp-content/upgrade/dreamobject-db-backup.sql
 
 Why there? Security. It's a safer spot, though safest would be a non-web-accessible folder. Maybe in the future.
 
-= What's this S3 error? =
+= Using the Plugin =
 
-The following error means your keys aren't correct, and the connection to DreamObjects is failing. Make sure the keys have access to that bucket.
+<strong>How often can I schedule backups?</strong>
 
+You can schedule them daily, weekly, or monthly.
+
+<strong>Can I force a backup to run now?</strong>
+
+Yep! It actually sets it to run in 60 seconds, but works out the same.
+
+<strong>How long does it keep backups for?</strong>
+
+Since you get charged on space used for DreamObjects, the default is to retain the last 15 backups. If you need more, you can save up to 90 backups, however that's rarely needed.
+
+<strong>Can I keep them forever?</strong>
+
+If you chose 'all' then yes, however this is not recommended. DreamObjects (like most S3/cloud platforms) charges you based on space and bandwidth, so if you have a large amount of files stored, you will be charged more money.
+
+<strong>Who can upload files?</strong>
+
+Anyone who can upload media can upload files, so this generally covers Authors and up. Only the Administrators can set the upload bucket, however.
+
+<strong>How do I use the CLI?</strong>
+If you have <a href="https://github.com/wp-cli/wp-cli#what-is-wp-cli">wp-cli</a> installed on your server (which DreamHost servers do), you can use the following commands:
+
+<pre>wp dreamobjects backup</pre>
+
+= Errors =
+<strong>What's this <code>S3::listBuckets()</code> error?</strong>
+
+Any time you see an error like this, it means the plugin can't talk to your DreamObjects buckets:
 <code>
 "warning: S3::listBuckets(): [403] 
 Unexpected HTTP status in /wp-content/plugins/dreamobjects/lib/S3.php on line 249"
 </code>
 
-= Do you work for DreamHost? =
+Reasons why include the key/secretkey pair aren't actually setup correctly, the bucket was deleted after adding it to the plugin, or your DreamObjects account is disabled. Double check that your keys are correct and the bucket exists.
 
-Yes, but this isn't an official DreamHost plugin at this time. It just works.
+<strong>The automated backup is set to run at 3am but it didn't run till 8am!</strong>
+
+That's actually not an error. WordPress kicks off cron jobs when someone visits your site, so if no one visted the site from 3am to 8am, then the job to backup wouldn't run until then.
 
 == Screenshots ==
 1. DreamObjects Private Key
