@@ -91,11 +91,11 @@ Yep! It actually sets it to run in 60 seconds, but works out the same.
 
 <strong>I kicked off an ASAP backup, but it says don't refresh the page. How do I know it's done?</strong>
 
-By revisiting the page, <em>but not</em> pressing refresh. Refresh is a funny thing. It re-runs what you last did, so you might accidently kick off another backup. You probably don't want that.
+By revisiting the page, <em>but not</em> pressing refresh. Refresh is a funny thing. It re-runs what you last did, so you might accidently kick off another backup. You probably don't want that. The list isn't dynamically generated either, so just sitting on the page waiting won't do anything except entertain you as much as watching paint dry.
 
 My suggestions: Visit another part of your site and go get a cup of coffee, or something else that will kill time for about two minutes. Then come back to the backups page. Just click on it from the admin sidebar. You'll see your backup is done.
 
-(Yes, I want to make a better notification about that, I have to master AJAX)
+(Yes, I want to make a better notification about that, I have to master AJAX.)
 
 <strong>How long does it keep backups?</strong>
 
