@@ -148,7 +148,7 @@ if ( get_option('dh-do-bucket') && (get_option('dh-do-bucket') != "XXXX") && !is
 					<?php 
 						if ( get_option('dh-do-bucket') ) {
 						    $s3 = new S3(get_option('dh-do-key'), get_option('dh-do-secretkey'));
-    if (($backups = $s3->getBucket(get_option('dh-do-bucket'), next(explode('//', get_bloginfo('siteurl'))) ) ) !== false) {
+    if (($backups = $s3->getBucket(get_option('dh-do-bucket'), next(explode('//', home_url())) ) ) !== false) {
         krsort($backups);
         $count = 0;
         foreach ($backups as $object) {

@@ -135,6 +135,7 @@ That's actually not an error. WordPress kicks off cron jobs when someone visits 
 Dec 26, 2012 by Ipstenu
 
 * Fixed date/time issue with backups displaying wrong (did not impact functionality, just bad date conversion)
+* Changed refs of siteurl to home_url, in order to fix wp-cli backups going astray under certain conditions
 
 = Version 2.1 =
 Dec 21, 2012 by Ipstenu
