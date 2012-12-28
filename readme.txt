@@ -89,7 +89,15 @@ You can schedule them daily, weekly, or monthly.
 
 Yep! It actually sets it to run in 60 seconds, but works out the same.
 
-<strong>How long does it keep backups for?</strong>
+<strong>I kicked off an ASAP backup, but it says don't refresh the page. How do I know it's done?</strong>
+
+By revisiting the page, <em>but not</em> pressing refresh. Refresh is a funny thing. It re-runs what you last did, so you might accidently kick off another backup. You probably don't want that.
+
+My suggestions: Visit another part of your site and go get a cup of coffee, or something else that will kill time for about two minutes. Then come back to the backups page. Just click on it from the admin sidebar. You'll see your backup is done.
+
+(Yes, I want to make a better notification about that, I have to master AJAX)
+
+<strong>How long does it keep backups?</strong>
 
 Since you get charged on space used for DreamObjects, the default is to retain the last 15 backups. If you need more, you can save up to 90 backups, however that's rarely needed.
 

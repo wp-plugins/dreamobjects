@@ -108,7 +108,7 @@ class DHDO {
 
 	function backupMessage() {
 	   $timestamp = wp_next_scheduled( 'dh-do-backupnow' );
-	   $string = sprintf( __('You have an ad-hoc backup scheduled for today at %s (time based on WP time/date settings). Do not hit refresh!', dreamobjects), date_i18n('h:i a', $timestamp) );
+	   $string = sprintf( __('You have an ad-hoc backup scheduled for today at %s (time based on WP time/date settings). Do not hit refresh, the backup will occur behind the scenes.', dreamobjects), date_i18n('h:i a', $timestamp) );
 	   echo "<div id='message' class='updated fade'><p><strong>".$string."</strong></p></div>";
 		}
 
