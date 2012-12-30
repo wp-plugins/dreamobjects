@@ -168,7 +168,7 @@ if ( get_option('dh-do-bucket') && (get_option('dh-do-bucket') != "XXXX") && !is
 
 			<form method="post" action="admin.php?page=dreamobjects-menu-backup&backup-now=true">
     <input type="hidden" name="action" value="backup" />
-    <?php wp_nonce_field('backup-now'); ?>
+    <?php wp_nonce_field('dhdo-backupnow'); ?>
     <h3><?php _e('Backup ASAP!', dreamobjects); ?></h3>
     <p><?php _e('Oh you really want to do a backup right now? Schedule your backup to start in a minute. Be careful! This may take a while, and slow your site down, if you have a big site.', dreamobjects); ?></p>
 

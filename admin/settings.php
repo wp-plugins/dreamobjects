@@ -41,7 +41,7 @@ include_once (PLUGIN_DIR . '/lib/S3.php');
 					<?php wp_nonce_field('update-options'); ?>
 					<input type="hidden" name="page_options" value="dh-do-key,dh-do-secretkey" />
 
-					<p><?php _e('DreamObjects™ is an inexpensive, scalable object storage service that was developed from the ground up to provide a reliable, flexible cloud storage solution for entrepreneurs and developers. It provides a perfect, scalable storage solution for your WordPress site.', dreamobjects); ?></p>
+					<p><?php _e('DreamObjects&#153; is an inexpensive, scalable object storage service that was developed from the ground up to provide a reliable, flexible cloud storage solution for entrepreneurs and developers. It provides a perfect, scalable storage solution for your WordPress site.', dreamobjects); ?></p>
 					<p><?php _e('Once you\'ve configured your keypair here, you\'ll be able to use the features of this plugin.', dreamobjects); ?></p>
 
 <table class="form-table">
@@ -94,7 +94,7 @@ include_once (PLUGIN_DIR . '/lib/S3.php');
     <form  method="post" action="options.php">
         <input type="hidden" name="action" value="update" />
         <?php wp_nonce_field('update-options'); ?>
-        <input type="text" name="do-do-new-bucket" id="new-bucket" value="<?php echo $_GET['do-do-new-bucket']; ?>" />
+        <input type="text" name="do-do-new-bucket" id="new-bucket" value="" />
         <p class="submit"><input class='button-secondary' type='Submit' name='newbucket' value='<?php _e("Create Bucket", dreamobjects); ?>' id='submitbutton' /></p>
     </form>
 <!--

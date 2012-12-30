@@ -3,15 +3,15 @@ Contributors: Ipstenu, DanCoulter
 Tags: cloud, dreamhost, dreamobjects
 Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 2.1
+Stable tag: 2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Connect your WordPress site to DreamHost's DreamObjects
+Connect your WordPress site to DreamHost's DreamObjects.
 
 == Description ==
 
-DreamHost has its own Cloud - <a href="http://dreamhost.com/cloud/dreamobjects/">DreamObjects™</a> - an inexpensive, scalable object storage service that was developed from the ground up to provide a reliable, flexible cloud storage solution for entrepreneurs and developers. It provides a perfect, scalable storage solution for your WordPress site.
+DreamHost has its own Cloud - <a href="http://dreamhost.com/cloud/dreamobjects/">DreamObjects&#153;</a> - an inexpensive, scalable object storage service that was developed from the ground up to provide a reliable, flexible cloud storage solution for entrepreneurs and developers. It provides a perfect, scalable storage solution for your WordPress site.
 
 Well now that we've gotten the sales-pitch out of the way, DreamObjects Connections will plugin your WordPress site into DreamObjects, tapping into the amazing power of automated backups, fileuploaders, and more!
 
@@ -140,10 +140,11 @@ That's actually not an error. WordPress kicks off cron jobs when someone visits 
 == Changelog ==
 
 = Version 2.2 =
-Dec 26, 2012 by Ipstenu
+Dec 30, 2012 by Ipstenu
 
 * Fixed date/time issue with backups displaying wrong (did not impact functionality, just bad date conversion)
 * Changed refs of siteurl to home_url, in order to fix wp-cli backups going astray under certain conditions
+* Security fixes (from duck_ aka Jon Cave)
 
 = Version 2.1 =
 Dec 21, 2012 by Ipstenu
