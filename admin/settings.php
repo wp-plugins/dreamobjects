@@ -94,7 +94,7 @@ include_once (PLUGIN_DIR . '/lib/S3.php');
     <form  method="post" action="options.php">
         <input type="hidden" name="action" value="update" />
         <?php wp_nonce_field('update-options'); ?>
-        <input type="text" name="do-do-new-bucket" id="new-bucket" value="<?php echo $_GET['do-do-new-bucket']; ?>" />
+        <input type="text" name="do-do-new-bucket" id="new-bucket" value="" />
         <p class="submit"><input class='button-secondary' type='Submit' name='newbucket' value='<?php _e("Create Bucket", dreamobjects); ?>' id='submitbutton' /></p>
     </form>
 <!--

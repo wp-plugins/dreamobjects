@@ -21,178 +21,109 @@ if (!defined('ABSPATH')) {
     die();
 }
 
-//DHDOU::backup()
-        include_once( PLUGIN_DIR. '/lib/S3.php');
-		$sections = get_option('dh-do-backupsection');
-		if ( !$sections ) {
-			$sections = array();
-		}
-		?>
-			<script type="text/javascript">
-				var ajaxTarget = "<?php echo self::getURL() ?>backup.ajax.php";
-				var nonce = "<?php echo wp_create_nonce('dreamobjects'); ?>";
-			</script>
-			<div class="wrap">
-				<div id="icon-dreamobjects" class="icon32"></div>
-				<h2><?php _e("Backups", dreamobjects); ?></h2>
+include_once( PLUGIN_DIR. '/lib/S3.php');
+?>
 
-<?php if ( get_option('dh-do-key') && get_option('dh-do-secretkey') ) : ?>
-				
-				<p><?php _e("Configure your site for backups by selecting your bucket, what you want to backup, and when.", dreamobjects); ?></p>
+<script type="text/javascript">
+	var ajaxTarget = "<?php echo self::getURL() ?>uploader.ajax.php";
+	var nonce = "<?php echo wp_create_nonce('dreamobjects'); ?>";
+</script>
 
-				<h3><?php _e('Settings', dreamobjects); ?></h3>
-				<form method="post" action="options.php">
-					<input type="hidden" name="action" value="update" />
-					<?php wp_nonce_field('update-options'); ?>
-					<input type="hidden" name="page_options" value="dh-do-bucket,dh-do-backupsection,dh-do-schedule,dh-do-retain" />
+<div class="wrap">
+	<div id="icon-dreamobjects" class="icon32"></div>
+	<h2><?php _e("Uploads", dreamobjects); ?></h2>
+	
+	<p><?php _e("Upload files directly to DreamObjects.", dreamobjects); ?></p>
+
+<?php if ( get_option('dh-do-key') && get_option('dh-do-secretkey') ) : // If the keys are set (standard check)
+
+    if (current_user_can('manage_options') ) {
+?>
+	<h3><?php _e('Settings', dreamobjects); ?></h3>
+	<form method="post" action="options.php">
+		<input type="hidden" name="action" value="update" />
+		<?php wp_nonce_field('update-options'); ?>
+		<input type="hidden" name="page_options" value="dh-do-bucketup,dh-do-uploadpub" />
 
 <table class="form-table">
     <tbody>
-
-						<?php
-							$s3 = new S3(get_option('dh-do-key'), get_option('dh-do-secretkey')); 
-							$buckets = $s3->listBuckets();
-						?>
+<?php
+	$s3 = new S3(get_option('dh-do-key'), get_option('dh-do-secretkey')); 
+	$buckets = $s3->listBuckets();
+?>
         <tr valign="top">
-            <th scope="row"><label for="dh-do-bucket"><?php _e('Bucket Name', dreamobjects); ?></label></th>
-            <td><select name="dh-do-bucket">
+            <th scope="row"><label for="dh-do-bucketup"><?php _e('Bucket Name', dreamobjects); ?></label></th>
+            <td><select name="dh-do-bucketup">
                                     <option value="XXXX">(select a bucket)</option>
-								<?php foreach ( $buckets as $b ) : ?>
-									<option <?php if ( $b == get_option('dh-do-bucket') ) echo 'selected="selected"' ?>><?php echo $b ?></option>
-								<?php endforeach; ?>
-							</select>
-            <p class="description"><?php _e('Select from pre-existing buckets.', dreamobjects); ?></p>
-            <?php if ( get_option('dh-do-bucketup') && ( !get_option('dh-do-bucketup') || (get_option('dh-do-bucketup') != "XXXX") ) ) { 
-                $alreadyusing = sprintf(__('You are currently using the bucket "%s" for Uploads. While you can reuse this bucket, it would be best not to.', dreamobjects), get_option('dh-do-bucket')  );
+		<?php foreach ( $buckets as $b ) : ?>
+<option <?php if ( $b == get_option('dh-do-bucketup') ) echo 'selected="selected"' ?>><?php echo $b ?></option>
+		<?php endforeach; ?>
+	</select>
+            <p class="description"><?php _e('Select from your pre-existing buckets.', dreamobjects); ?></p>
+            <?php if ( get_option('dh-do-bucket') && ( !get_option('dh-do-bucket') || (get_option('dh-do-bucket') != "XXXX") ) ) { 
+                $alreadyusing = sprintf(__('You are already using the bucket "%s" for backups. While you can reuse this bucket, it would be best not to.', dreamobjects), get_option('dh-do-bucket')  );
                 echo '<p class="description">' . $alreadyusing . '</p>';
             } ?>            
-
             </td>
         </tr>
-
-<?php  // BEGIN Show Bucket List 
-if ( get_option('dh-do-bucket') && (get_option('dh-do-bucket') != "XXXX") && !is_null(get_option('dh-do-bucket')) ) :?>
-
-        <tr valign="top">
-            <th scope="row"><label for="dh-do-what"><?php _e('What to Backup', dreamobjects); ?></label></th>
-            <td>
-								<p><label for="dh-do-backupsection-files">
-								<input <?php if ( in_array('files', $sections) ) echo 'checked="checked"' ?> type="checkbox" name="dh-do-backupsection[]" value="files" id="dh-do-backupsection-files" />
-								<?php _e('All Files', dreamobjects); ?>
-							</label><br />
-							<label for="dh-do-backupsection-database">
-								<input <?php if ( in_array('database', $sections) ) echo 'checked="checked"' ?> type="checkbox" name="dh-do-backupsection[]" value="database" id="dh-do-backupsection-database" />
-								<?php _e('Database', dreamobjects); ?>
-							</label><br />
-						</p>
-				<p class="description"><?php _e('You can select portions of your site to backup.', dreamobjects); ?></p>
-				</td>
-        </tr>
         
         <tr valign="top">
-            <th scope="row"><label for="dh-do-schedule"><?php _e('Schedule', dreamobjects); ?></label></th>
-            <td>
-                <select name="dh-do-schedule">
-								<?php foreach ( array('Disabled','Daily','Weekly','Monthly') as $s ) : ?>
-									<option value="<?php echo strtolower($s) ?>" <?php if ( strtolower($s) == get_option('dh-do-schedule') ) echo 'selected="selected"' ?>><?php echo $s ?></option>
-								<?php endforeach; ?>
-				</select>
-				<?php
-                  $timestamp = wp_next_scheduled( 'dh-do-backup' ); 
-                  $nextbackup = sprintf(__('Next scheduled backup is at %s', dreamobjects), date_i18n('F j, Y h:i a', $timestamp) );
-            ?>
-            <p class="description"><?php _e('How often do you want to backup your files? Daily is recommended.', dreamobjects); ?></p>
-            <?php if ( get_option('dh-do-schedule') != "disabled" && wp_next_scheduled('dh-do-backup') ) { ?>
-            <p class="description"><?php echo $nextbackup; ?></p>
-            <?php } // Show next scheduled ?>
-				</td>
+            <th scope="row"><label for="dh-do-uploadpub"><?php _e('Privacy', dreamobjects); ?></label></th>
+            <td><input type="checkbox" name="dh-do-uploadpub" id="dh-do-uploadpub" value="1" <?php checked( '1' == get_option('dh-do-uploadpub') ); ?> /> <?php _e('Private Uploads', dreamobjects); ?>
+            <p class="description"><?php _e('Designate if your uploads are public or private. If checked, all uploads are private. Be advised, the links to your uploads below will not work publically if you chose this.', dreamobjects); ?></p></td>
         </tr>
-        <tr valign="top">
-            <th scope="row"><label for="dh-do-retain"><?php _e('Backup Retention', dreamobjects); ?></label></th>
-            <td>				
-                <select name="dh-do-retain">
-				    <?php foreach ( array('15','30','60','90','all') as $s ) : ?>
-				        <option value="<?php echo strtolower($s) ?>" <?php if ( strtolower($s) == get_option('dh-do-retain') ) echo 'selected="selected"' ?>><?php echo $s ?></option>
-				    <?php endforeach; ?>
-				</select>	
-				<p class="description"><?php _e('How many many backups do you want to keep? 30 is recommended.', dreamobjects); ?></p>
-				<p class="description"><strong><?php _e('NOTICE!', dreamobjects); ?></strong> <?php _e('DreamObjects charges you based on diskspace used. Setting to \'All\' will retain your backups forwever, however this can cost you a large sum of money over time. Please use cautiously!', dreamobjects); ?></p>
-				</td>
-        </tr>
-        
-        <tr valign="top">
-        <th scope="row"></th>
-        <td>        </td>
-        </tr>
-   
-<?php endif; 
-// ENDS how bucket list ?>
 </tbody>
 </table>
 
 <p class="submit"><input class='button-primary' type='Submit' name='update' value='<?php _e("Update Options", dreamobjects); ?>' id='submitbutton' /></p>
+	</form>
+<?php }
 
-				</form>
-				
-<?php if ( get_option('dh-do-bucket') && ( !get_option('dh-do-bucket') || (get_option('dh-do-bucket') != "XXXX") ) ) { ?>
-                <?php 
-                    $num_backups = get_option('dh-do-retain');
-                    if ( $num_backups == 'all') { $num_backups = 'WP';}
-                    $show_backup_header = sprintf(__('Latest %s Backups', dreamobjects),$num_backups ); 
-                ?>
-				<h3><?php echo $show_backup_header; ?></h3>
-				<p><?php _e('All backups can be downloaded from this page without logging in to DreamObjects.', dreamobjects); ?></p>
+endif; // Manage Options ?>
 
-				<div id="backups">
-				    <ol>
-					<?php 
-						if ( get_option('dh-do-bucket') ) {
-						    $s3 = new S3(get_option('dh-do-key'), get_option('dh-do-secretkey'));
-    if (($backups = $s3->getBucket(get_option('dh-do-bucket'), next(explode('//', home_url())) ) ) !== false) {
-        krsort($backups);
-        $count = 0;
-        foreach ($backups as $object) {
-            $offset = get_option( 'gmt_offset' ) * 60 * 60; // Time offset in seconds
-            $ziptime = $object['time'] + $offset; // Converting to local time
-            $object['label'] = sprintf(__('WordPress Backup from %s', dreamobjects), date_i18n('F j, Y h:i a', $ziptime) );
-            $object = apply_filters('dh-do-backup-item', $object);
-								
-			if ( ($num_backups != 'WP') && ( ++$count > $num_backups) ) break;
-            ?><li><a href="<?php echo $s3->getAuthenticatedURL(get_option('dh-do-bucket'), $object['name'], 3600, false, true); ?>"><?php echo $object['label']; ?></a></li><?php
-        }
-    }
-						} // if you picked a bucket
+<?php if ( get_option('dh-do-bucketup') && (get_option('dh-do-bucketup') != "XXXX") && !is_null(get_option('dh-do-bucketup')) ) : ?>
+	<h3><?php _e('Upload File', dreamobjects); ?></h3>
+
+<table class="form-table">
+    <tbody>
+        <tr>
+        <tr valign="top">
+            <td>
+            <p><?php _e('Please select a file by clicking the \'Browse\' button and press \'Upload\' to start uploading your file.', dreamobjects); ?></p>
+           	<form action="" method="post" enctype="multipart/form-data" name="uploader" id="uploader">
+              <input name="theFile" type="file" />
+              <input name="Submit" type="submit" value="Upload">
+              <?php wp_nonce_field('dhdo-uploader'); ?>
+        	</form>
+        	</td>
+        </tr>
+     </tbody>
+</table>       
+
+<div id="uploaders">
+<h3><?php _e('Available Files', dreamobjects); ?></h3>
+
+<p><?php _e('The files listed below are all linked using the public URL. If an image has been uploaded with \'private\' permissions, it will not display for anyone, not even you.', dreamobjects); ?></p>
+
+<?php if (current_user_can('manage_options') ) {
+    ?><p><?php _e('To publically display the list of uploaded files, use the shortcode <code>[dreamobjects]</code> in a post or page. It will show the same list as you see below to any site visitor.', dreamobjects); ?></p><?php
+} ?>
+
+    <ul><?php 
+        if ( get_option('dh-do-bucketup') && (get_option('dh-do-bucketup') != "XXXX") && !is_null(get_option('dh-do-bucketup')) ) {
+            $s3 = new S3(get_option('dh-do-key'), get_option('dh-do-secretkey'));
+            $bucket = get_option('dh-do-bucketup');
+        		if (($uploads = $s3->getBucket( $bucket ) ) !== false) {
+            		krsort($uploads);
+                    foreach ($uploads as $object) {
+                           $object['label'] = sprintf(__('Uploaded on %s', dreamobjects), get_date_from_gmt( date('Y-m-d H:i:s', $object['time']) , 'F j, Y h:i a' ) );
+                        ?><li><a href="https://objects.dreamhost.com/<?php echo $bucket .'/'. $object[name]; ?>"><?php echo $object['name']; ?></a> - <?php echo $object['label']; ?></li><?php
+                    }
+                }
+		} // if you picked a bucket
 					?>
-				    </ol>
-				</div>
+     </ul>
+</div>
+<?php endif; // if bucketup ?>
 
-			<form method="post" action="admin.php?page=dreamobjects-menu-backup&backup-now=true">
-    <input type="hidden" name="action" value="backup" />
-    <?php wp_nonce_field('backup-now'); ?>
-    <h3><?php _e('Backup ASAP!', dreamobjects); ?></h3>
-    <p><?php _e('Oh you really want to do a backup right now? Schedule your backup to start in a minute. Be careful! This may take a while, and slow your site down, if you have a big site.', dreamobjects); ?></p>
-
-    <?php
-     	$timestamp = wp_next_scheduled( 'dh-do-backup' ); 
-        $nextbackup = sprintf(__('Keep in mind, your next scheduled backup is at %s', dreamobjects), date_i18n('F j, Y h:i a', $timestamp) ); 
-    ?>
-    <?php if ( get_option('dh-do-schedule') != "disabled" && wp_next_scheduled('dh-do-backup') ) {?>
-    <p><?php echo $nextbackup; ?></p>
-    <?php } ?>
-
-
-    <p class="submit"><input class='button-primary' type='Submit' name='backup' value='<?php _e("Backup ASAP", dreamobjects); ?>' id='submitbutton' /></p>
-                </form>
-            <?php
-        } else {
-        ?><p><?php _e('Until you connect to a bucket, you can\'t see anything here.', dreamobjects); ?></p><?php
-        }
-
-else:
-
-?><p><?php _e("Please fill in your Access Key and Secret Key. You cannot use the rest of this plugin without those!", dreamobjects); ?></p><?php
-
-endif; // Show backup settings
-
-?>
-			</div>
+</div>

@@ -32,13 +32,13 @@ Copyright 2012 Mika Epstein (email: ipstenu@ipstenu.org)
  */
 
 require_once dirname(__FILE__) . '/admin/defines.php';
-	
+
 class DHDO {
     // INIT - hooking into this lets us run things when a page is hit.
 
     function init() {
         // SCHEDULER
-		if ( isset($_POST['dh-do-schedule']) ) {
+		if ( isset($_POST['dh-do-schedule']) && current_user_can('manage_options') ) {
 			wp_clear_scheduled_hook('dh-do-backup');
 			if ( $_POST['dh-do-schedule'] != 'disabled' ) {
 				wp_schedule_event(current_time('timestamp'), $_POST['dh-do-schedule'], 'dh-do-backup'); 
@@ -46,7 +46,7 @@ class DHDO {
 		}
 
 		// CREATE NEW BUCKET
-        if ( isset($_POST['do-do-new-bucket']) && !empty($_POST['do-do-new-bucket']) ) {
+        if ( current_user_can('manage_options') && isset($_POST['do-do-new-bucket']) && !empty($_POST['do-do-new-bucket']) ) {
 	       include_once 'lib/S3.php';
 	        $_POST['do-do-new-bucket'] = strtolower($_POST['do-do-new-bucket']);
 	        $s3 = new S3(get_option('dh-do-key'), get_option('dh-do-secretkey'));
@@ -57,38 +57,37 @@ class DHDO {
 	       }
        
         // UPLOADER
-        if( isset($_POST['Submit']) && isset($_FILES['theFile']) && $_GET['page'] ==
+        if( current_user_can('manage_options') && isset($_POST['Submit']) && isset($_FILES['theFile']) && $_GET['page'] ==
 'dreamobjects-menu-uploader' ){
-		      $fileName = $_FILES['theFile']['name'];
-		      $fileTempName = $_FILES['theFile']['tmp_name'];
-		      $fileType = $_FILES['theFile']['type'];
-		      
-		      
-		      require_once('lib/S3.php');
-		      $s3 = new S3(get_option('dh-do-key'), get_option('dh-do-secretkey'));
-		      if ( get_option('dh-do-uploadpub') != 1 )
-		          {if ($s3->putObjectFile($fileTempName, get_option('dh-do-bucketup'), $fileName, S3::ACL_PUBLIC_READ, array(),$fileType))
-    		          {add_action('admin_notices', array('DHDO','uploaderMessage'));}
-    		      else
-		              {add_action('admin_notices', array('DHDO','uploaderError'));}   
-		          }
-		      else
-		          {if ($s3->putObjectFile($fileTempName, get_option('dh-do-bucketup'), $fileName, S3::ACL_PRIVATE, array(),$fileType))
-    		          {add_action('admin_notices', array('DHDO','uploaderMessage'));}
-    		      else
-		              {add_action('admin_notices', array('DHDO','uploaderError'));}   
-		          }
 
+          check_admin_referer( 'dhdo-uploader');
+
+		  $fileName = sanitize_file_name( $_FILES['theFile']['name']);
+		  $fileTempName = $_FILES['theFile']['tmp_name'];
+		  $fileType = $_FILES['theFile']['type'];
+		  		  
+		  require_once('lib/S3.php');
+		  $s3 = new S3(get_option('dh-do-key'), get_option('dh-do-secretkey'));
+		  if ( get_option('dh-do-uploadpub') != 1 )
+		      {if ($s3->putObjectFile($fileTempName, get_option('dh-do-bucketup'), $fileName, S3::ACL_PUBLIC_READ, array(),$fileType))
+    		      {add_action('admin_notices', array('DHDO','uploaderMessage'));}
+    		  else
+		          {add_action('admin_notices', array('DHDO','uploaderError'));}   
+		      }
+		  else
+		      {if ($s3->putObjectFile($fileTempName, get_option('dh-do-bucketup'), $fileName, S3::ACL_PRIVATE, array(),$fileType))
+    		      {add_action('admin_notices', array('DHDO','uploaderMessage'));}
+    		  else
+		          {add_action('admin_notices', array('DHDO','uploaderError'));}   
+		      }
         }
         
         // Update messgae
-		if ( isset($_GET['settings-updated']) && ( $_GET['page'] ==
-'dreamobjects-menu' || $_GET['page'] ==
-'dreamobjects-menu-backup' || $_GET['page'] ==
-'dreamobjects-menu-uploader' ) ) add_action('admin_notices', array('DHDO','updateMessage'));
+		if ( isset($_GET['settings-updated']) && ( $_GET['page'] == 'dreamobjects-menu' || $_GET['page'] == 'dreamobjects-menu-backup' || $_GET['page'] == 'dreamobjects-menu-uploader' ) ) add_action('admin_notices', array('DHDO','updateMessage'));
 
         // Backup Now
-        if ( isset($_GET['backup-now']) && $_GET['page'] == 'dreamobjects-menu-backup' ) {
+        if ( current_user_can('manage_options') &&  isset($_GET['backup-now']) && $_GET['page'] == 'dreamobjects-menu-backup' ) {
+            check_admin_referer( 'dhdo-backupnow' );
             wp_schedule_single_event( current_time('timestamp')+60, 'dh-do-backupnow');
             add_action('admin_notices', array('DHDO','backupMessage'));
         }
@@ -108,7 +107,7 @@ class DHDO {
 
 	function backupMessage() {
 	   $timestamp = wp_next_scheduled( 'dh-do-backupnow' );
-	   $string = sprintf( __('You have an ad-hoc backup scheduled for today at %s (time based on WP time/date settings). Do not hit refresh, the backup will occur behind the scenes.', dreamobjects), date_i18n('h:i a', $timestamp) );
+	   $string = sprintf( __('You have an ad-hoc backup scheduled for today at %s. Do not hit refresh, the backup will occur behind the scenes. You may continue using your site per usual.', dreamobjects), date_i18n('h:i a', $timestamp) );
 	   echo "<div id='message' class='updated fade'><p><strong>".$string."</strong></p></div>";
 		}
 
@@ -254,5 +253,11 @@ class DHDO {
                 }
             }
 		}
+	}
+	function cron_schedules($schedules) {
+		$schedules['daily'] = array('interval'=>86400, 'display' => 'Once Daily');
+		$schedules['weekly'] = array('interval'=>604800, 'display' => 'Once Weekly');
+		$schedules['monthly'] = array('interval'=>2592000, 'display' => 'Once Monthly');
+		return $schedules;
 	}
 }
