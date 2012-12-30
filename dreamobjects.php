@@ -1,9 +1,9 @@
 <?php
 
 /*
-Plugin Name: DreamObjects
+Plugin Name: DreamObjects Connection
 Plugin URI: https://github.com/Ipstenu/dreamobjects
-Description: Integrate your WordPress install with DreamHost DreamObjects
+Description: Connect your WordPress install to your DreamHost DreamObjects buckets.
 Version: 2.2
 Author: Mika Epstein
 Author URI: http://ipstenu.org/
@@ -107,7 +107,7 @@ class DHDO {
 
 	function backupMessage() {
 	   $timestamp = wp_next_scheduled( 'dh-do-backupnow' );
-	   $string = sprintf( __('You have an ad-hoc backup scheduled for today at %s. Do not hit refresh, the backup will occur behind the scenes. You may continue using your site per usual.', dreamobjects), date_i18n('h:i a', $timestamp) );
+	   $string = sprintf( __('You have an ad-hoc backup scheduled for today at %s. Do not hit refresh on the backups page. You may continue using your site per usual, the backup will run behind the scenes.', dreamobjects), date_i18n('h:i a', $timestamp) );
 	   echo "<div id='message' class='updated fade'><p><strong>".$string."</strong></p></div>";
 		}
 
