@@ -30,6 +30,7 @@ Well now that we've gotten the sales-pitch out of the way, DreamObjects Connecti
 = To Do =
 * CDN (when available)
 * Better <code>[dreamobjects]</code> support for folders
+* Multipart file uploads to avoid large file upload problems (either get <a href="http://docs.amazonwebservices.com/AmazonS3/latest/dev/LLuploadFilePHP.html">multipart fileupload</a> working or <a href="http://superuser.com/questions/336219/how-do-i-split-a-zip-file-into-multiple-segments">split the zip</a>)
 
 == Installation ==
 
@@ -73,7 +74,7 @@ Not at this time. Backups for Multisite are a little messier, and I'm not sure h
 
 <strong>How big a site can this back up?</strong>
 
-The hard limit is 2G.
+The hard limit is 2G. The practical limit is 200megs.
 
 <strong>Why does my backup run but not back anything up?</strong>
 
@@ -91,6 +92,8 @@ There are a few things at play here:
 4. The amount of available CPU
 
 In a perfect world, you have enough to cope with all that. When you have a very large site, however, not so much. You can try increasing your <a href="http://wiki.dreamhost.com/PHP.ini#Increase_Filesize_Upload_Limit">PHP filesize upload limit</a>, or if your site really is that big, consider a VPS. Remember you're using WordPress to run backups here, so you're at the mercy of a middle-man. The DreamObjects itself can handle 2G, but once you hit a few hundred megs, everything else starts getting weird.
+
+The fix would be to do multipart file uploads.
 
 <strong>Where's the Database in the zip?</strong>
 
