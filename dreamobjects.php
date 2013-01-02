@@ -41,13 +41,17 @@ class DHDO {
 		if ( isset($_POST['dh-do-schedule']) && current_user_can('manage_options') ) {
 			wp_clear_scheduled_hook('dh-do-backup');
 			if ( $_POST['dh-do-schedule'] != 'disabled' ) {
-				wp_schedule_event(current_time('timestamp'), $_POST['dh-do-schedule'], 'dh-do-backup'); 
+				wp_schedule_event(current_time('timestamp')+86400, $_POST['dh-do-schedule'], 'dh-do-backup');
+				$nextbackup = sprintf(__('Next backup: %s', dreamobjects), date_i18n('F j, Y h:i a', current_time('timestamp')+86400) );
+				DHDO::logger('Scheduled '.$_POST['dh-do-schedule'].' backup. ' .$nextbackup);
 			}
 		}
 
 		// CREATE NEW BUCKET
         if ( current_user_can('manage_options') && isset($_POST['do-do-new-bucket']) && !empty($_POST['do-do-new-bucket']) ) {
-	       include_once 'lib/S3.php';
+        
+            check_admin_referer( 'update-options');
+	        include_once 'lib/S3.php';
 	        $_POST['do-do-new-bucket'] = strtolower($_POST['do-do-new-bucket']);
 	        $s3 = new S3(get_option('dh-do-key'), get_option('dh-do-secretkey'));
 	        if ($s3->putBucket($_POST['do-do-new-bucket']))
@@ -55,7 +59,20 @@ class DHDO {
 	        else
 	           {add_action('admin_notices', array('DHDO','newBucketError'));}
 	       }
-       
+	       
+	    // CHECK LOGGING
+	    if ( current_user_can('manage_options') && isset($_POST['dhdo-logchange']) && $_POST['dhdo-logchange'] == 'Y' ) {
+            check_admin_referer( 'update-options');
+            if (isset($_POST['dh-do-logging'])) {
+                $debugmode = $_POST['dh-do-logging'];
+                DHDO::logger('Logging enabled.');
+            } else {
+                $debugmode = 'off';
+                DHDO::logger('reset');
+            }
+            update_option( 'dh-do-logging', $debugmode );
+        }
+
         // UPLOADER
         if( current_user_can('manage_options') && isset($_POST['Submit']) && isset($_FILES['theFile']) && $_GET['page'] ==
 'dreamobjects-menu-uploader' ){
@@ -90,12 +107,11 @@ class DHDO {
             check_admin_referer( 'dhdo-backupnow' );
             wp_schedule_single_event( current_time('timestamp')+60, 'dh-do-backupnow');
             add_action('admin_notices', array('DHDO','backupMessage'));
+            DHDO::logger('Scheduled ASAP backup.');
         }
         
         // Backup Message
-        if ( wp_next_scheduled( 'dh-do-backupnow' ) && ( $_GET['page'] ==
-'dreamobjects-menu' || $_GET['page'] ==
-'dreamobjects-menu-backup' ) ) {
+        if ( wp_next_scheduled( 'dh-do-backupnow' ) && ( $_GET['page'] == 'dreamobjects-menu' || $_GET['page'] == 'dreamobjects-menu-backup' ) ) {
             add_action('admin_notices', array('DHDO','backupMessage'));
         }
 	}
@@ -199,6 +215,20 @@ class DHDO {
 		}
 		return $data;
 	}
+
+	function logger($msg) {
+       $file = PLUGIN_DIR."/debug.txt"; 
+	   if ($msg == "reset") {
+    	   $fd = fopen($file, "w+");
+    	   $str = "";
+	   }
+	   elseif ( get_option('dh-do-logging') == 'on') {	
+    	   $fd = fopen($file, "a");
+    	   $str = "[" . date("Y/m/d h:i:s", current_time('timestamp')) . "] " . $msg . "\n";
+       }
+   	   fwrite($fd, $str);
+   	   fclose($fd);
+	}
 	
 	function backup() {
 		global $wpdb;
@@ -215,26 +245,40 @@ class DHDO {
 		$zip = new PclZip($file);
 		$backups = array();
 
-
 		// All me files!
-		if ( in_array('files', $sections) ) $backups = array_merge($backups, DHDO::rscandir(ABSPATH));
+		if ( in_array('files', $sections) ) {
+		    $backups = array_merge($backups, DHDO::rscandir(ABSPATH));
+		    DHDO::logger('Files added to zip.');
+		} 
 		
 		// And me DB!
 		if ( in_array('database', $sections) ) {
 		
 			$tables = $wpdb->get_col("SHOW TABLES LIKE '" . $wpdb->prefix . "%'");
 			$result = shell_exec('mysqldump --single-transaction -h ' . DB_HOST . ' -u ' . DB_USER . ' --password="' . DB_PASSWORD . '" ' . DB_NAME . ' ' . implode(' ', $tables) . ' > ' .  WP_CONTENT_DIR . '/upgrade/dreamobject-db-backup.sql');
+			DHDO::logger('SQL file created.');
 			$backups[] = WP_CONTENT_DIR . '/upgrade/dreamobject-db-backup.sql';
+			DHDO::logger('SQL added to zip.');
 		}
 		
 		if ( !empty($backups) ) {
 			$zip->create($backups, '', ABSPATH);
 			
 			$s3 = new S3(get_option('dh-do-key'), get_option('dh-do-secretkey')); 
+			
+			// Upload
 			$upload = $s3->inputFile($file);
-			$s3->putObject($upload, get_option('dh-do-bucket'), next(explode('//', home_url())) . '/' . date_i18n('Y-m-d-His', current_time('timestamp')) . '.zip');
+			if ($s3->putObject($upload, get_option('dh-do-bucket'), next(explode('//', home_url())) . '/' . date_i18n('Y-m-d-His', current_time('timestamp')) . '.zip') ) {
+    			DHDO::logger('Copying backup to DreamObjects.');
+            } else {
+                DHDO::logger('File failed to copy to DreamObjects.');
+            }
+
+			// Cleanup
 			@unlink($file);
+			DHDO::logger('Deleting zip.');
 			@unlink(WP_CONTENT_DIR . '/upgrade/dreamobject-db-backup.sql');
+			DHDO::logger('Deleting SQL dump.');
 		}
 		
 		
@@ -249,6 +293,7 @@ class DHDO {
                 foreach ($backups as $object) {
                     if ( ++$count > $num_backups ) {
                         $s3->deleteObject(get_option('dh-do-bucket'), $object['name']);
+                        DHDO::logger('Removed backup '. $object['name'] .' from DreamObjects, per user retention choice.');
                     }    
                 }
             }

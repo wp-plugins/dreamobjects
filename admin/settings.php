@@ -42,7 +42,9 @@ include_once (PLUGIN_DIR . '/lib/S3.php');
 					<input type="hidden" name="page_options" value="dh-do-key,dh-do-secretkey" />
 
 					<p><?php _e('DreamObjects&#153; is an inexpensive, scalable object storage service that was developed from the ground up to provide a reliable, flexible cloud storage solution for entrepreneurs and developers. It provides a perfect, scalable storage solution for your WordPress site.', dreamobjects); ?></p>
+					<?php if ( !get_option('dh-do-key') || !get_option('dh-do-secretkey') ) { ?>
 					<p><?php _e('Once you\'ve configured your keypair here, you\'ll be able to use the features of this plugin.', dreamobjects); ?></p>
+					<?php } ?>
 
 <table class="form-table">
     <tbody>
@@ -61,11 +63,26 @@ include_once (PLUGIN_DIR . '/lib/S3.php');
 
 <p class="submit"><input class='button-primary' type='Submit' name='update' value='<?php _e("Update Options", dreamobjects); ?>' id='submitbutton' /></p>
 				</form>
-				
-<?php if ( get_option('dh-do-key') && get_option('dh-do-secretkey') ) : ?>
 
-    <h3><?php _e('Buckets', dreamobjects); ?></h3>
+			
+<?php if ( get_option('dh-do-key') && get_option('dh-do-secretkey') ) : ?>
+    <h3><?php _e('The Bucket Stuff', dreamobjects); ?></h3>
+ 
+    <table class="form-table"><tr valign="top">
+    <td width="50%"><h4><?php _e('Create A New Bucket', dreamobjects); ?></h4>
+
+    <p><?php _e('If you need to create a new bucket, just enter the name and click Create Bucket.', dreamobjects); ?>
+    <br /><?php _e('All buckets are created as "private" buckets.', dreamobjects); ?></p>
+    <form  method="post" action="options.php">
+        <input type="hidden" name="action" value="update" />
+        <?php wp_nonce_field('update-options'); ?>
+        <input type="text" name="do-do-new-bucket" id="new-bucket" value="" />
+        <p class="submit"><input class='button-secondary' type='Submit' name='newbucket' value='<?php _e("Create Bucket", dreamobjects); ?>' id='submitbutton' /></p>
+    </form></td>
+
+    <td width="50%"><h4><?php _e('Bucket List', dreamobjects); ?></h4>
     
+    <ul>
     <?php
     $s3 = new S3(get_option('dh-do-key'), get_option('dh-do-secretkey')); 
     $buckets = $s3->listBuckets();
@@ -80,42 +97,26 @@ include_once (PLUGIN_DIR . '/lib/S3.php');
                 {$string = ' <strong>'. __(' - Used for Uploads', dreamobjects).'</strong>';
                 echo $string;
                 }
-            else
-                {_e(' - Unused', dreamobjects);}
+
             echo "</li>";
         endforeach;
     endif;
-    
     ?>
- 
-    <h3><?php _e('Create A New Bucket', dreamobjects); ?></h3>
+    </ul></td>
+    </tr></table>
 
-    <p><?php _e('If you need to create a new bucket, just enter the name and click Create Bucket. All buckets are created as private.', dreamobjects); ?></p>
+    <h3><?php _e(' Debug Logging', dreamobjects); ?></h3>
+
+    <p><?php _e('If you\'re trying to troubleshoot problems, like why backups only work for SQL, you can turn on logging to see what\'s being kicked off and when. Generally you should not leave this on all the time.', dreamobjects); ?></p>
+    <p><?php _e('When you turn off logging, the file will wipe itself out for your protection.', dreamobjects); ?></p>
+
     <form  method="post" action="options.php">
         <input type="hidden" name="action" value="update" />
         <?php wp_nonce_field('update-options'); ?>
-        <input type="text" name="do-do-new-bucket" id="new-bucket" value="" />
-        <p class="submit"><input class='button-secondary' type='Submit' name='newbucket' value='<?php _e("Create Bucket", dreamobjects); ?>' id='submitbutton' /></p>
+        <input type="checkbox" name="dh-do-logging" <?php checked( get_option('dh-do-logging') == 'on',true); ?> /> <?php _e('Enable logging (if checked)', dreamobjects); ?>
+        <input type="hidden" name="dhdo-logchange" value="Y">
+        <p class="submit"><input class='button-secondary' type='Submit' name='logging' value='<?php _e("Configure Logging", dreamobjects); ?>' id='submitbutton' /></p>
     </form>
-<!--
-    <h3><?php _e('Logging', dreamobjects); ?></h3>
-
-    <form  method="post" action="options.php">
-        <?php wp_nonce_field('update-options'); ?>
-        <p class="description"><label for="dh-do-logging"><input <?php if ( get_option('dh-do-logging') == 'yes' ) echo 'checked="checked"' ?> type="checkbox" name="dh-do-logging" value="yes" id="dh-do-logging" /></label> <?php _e('Having issues with backups? Turn on logging.', dreamobjects); ?></p>
-
-        <input type="hidden" name="action" value="update" />
-
-        <p class="submit"><input class='button-secondary' type='Submit' name='logging' value='<?php _e("Enable Logging", dreamobjects); ?>' id='submitbutton' /></p>
-    </form>
-
-    <?php if ( get_option('dh-do-logging') == 'yes') {
-        
-        // Show Log
-        
-    }
-    ?>
--->
     <?php
     
 else:

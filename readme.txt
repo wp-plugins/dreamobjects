@@ -15,6 +15,8 @@ DreamHost has its own Cloud - <a href="http://dreamhost.com/cloud/dreamobjects/"
 
 Well now that we've gotten the sales-pitch out of the way, DreamObjects Connections will plugin your WordPress site into DreamObjects, tapping into the amazing power of automated backups, fileuploaders, and more!
 
+<em>Please do not open DreamHost Support Tickets for this plugin.</em> Honestly, the support techs are fantastic, but they can't debug this yet, so they'll just send you here anyway. Post in the <a href="http://wordpress.org/support/plugin/dreamobjects">support forum here</a>, and I'll get to you ASAP.
+
 = Backup Features =
 * Automatically backs up your site (DB and files) to your DreamObjects cloud on a daily, weekly, or monthly schedule.
 * Retains 15, 30, 60, or 90 backups at any given time (so as not to charge you the moon when you have a large site).
@@ -71,7 +73,24 @@ Not at this time. Backups for Multisite are a little messier, and I'm not sure h
 
 <strong>How big a site can this back up?</strong>
 
-I don't know. Presumably as large as your server memory can handle, which I know is a terrible answer. Remember you're using WordPress to run backups here, so you're at the mercy of a middle-man. The code itself can handle any size, but once you hit a few hundred megs, you may run into problems.
+The hard limit is 2G.
+
+<strong>Why does my backup run but not back anything up?</strong>
+
+Size. It's actually running the backup, but code that copies code up to DreamObjects has some limitations that happen on Amazon as well. Basically, the larger your backup, the more likely it is to decide it doesn't want to copy the file up without killing your server. Since the code is smart enough, it won't thrash your server, but it will magically decide to not copy files up.
+
+You can test if this is happening by trying to only backup the SQL. If that works, then it's the size of your total backup. 
+
+<strong>Wait, you said it could back up 2G! What gives?</strong>
+
+There are a few things at play here:
+
+1. The size of your backup
+2. The file upload limit size in your PHP
+3. The amount of server memory
+4. The amount of available CPU
+
+In a perfect world, you have enough to cope with all that. When you have a very large site, however, not so much. You can try increasing your <a href="http://wiki.dreamhost.com/PHP.ini#Increase_Filesize_Upload_Limit">PHP filesize upload limit</a>, or if your site really is that big, consider a VPS. Remember you're using WordPress to run backups here, so you're at the mercy of a middle-man. The DreamObjects itself can handle 2G, but once you hit a few hundred megs, everything else starts getting weird.
 
 <strong>Where's the Database in the zip?</strong>
 
@@ -129,6 +148,10 @@ Reasons why include the key/secretkey pair aren't actually setup correctly, the 
 
 That's actually not an error. WordPress kicks off cron jobs when someone visits your site, so if no one visted the site from 3am to 8am, then the job to backup wouldn't run until then.
 
+<strong>Can I see a log of what happens?</strong>
+
+You can enable logging on the main DreamObjects screen. This is intended to be temporary (i.e. for debugging weird issues) rather than something you leave on forever. If you turn off logging, the log wipes itself for your protection.
+
 == Screenshots ==
 1. DreamObjects Private Key
 1. Your DreamObjects Public Key
@@ -138,6 +161,12 @@ That's actually not an error. WordPress kicks off cron jobs when someone visits 
 1. The uploader page, as seen by Authors
 
 == Changelog ==
+
+= Version 2.3 =
+Jan 3, 2012 by Ipstenu
+
+* Optional logging (good for debugging)
+* No longer takes a backup right away when saving settings (good for testing lots of stuff)
 
 = Version 2.2 =
 Dec 30, 2012 by Ipstenu

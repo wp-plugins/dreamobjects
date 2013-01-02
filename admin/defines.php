@@ -24,7 +24,7 @@ if (!defined('ABSPATH')) {
 // Set up defaults
 define( 'DHDO', true);
 defined('PLUGIN_DIR') || define('PLUGIN_DIR', realpath(dirname(__FILE__) . '/..'));
-define( 'PLUGIN_VERSION', '2.2' ); 
+define( 'PLUGIN_VERSION', '2.3' ); 
 
 if ( !defined('dreamobjects')) {define('dreamobjects','dreamobjects');} // Translation
 if ( !get_option('dh-do-key')) {update_option( 'dh-do-key', '' );}
@@ -34,7 +34,7 @@ if ( !get_option('dh-do-bucket')) {update_option( 'dh-do-bucket', 'XXXX' );}
 if ( !get_option('dh-do-schedule')) {update_option( 'dh-do-schedule', 'disabled' );}
 if ( !get_option('dh-do-backupsection')) {update_option( 'dh-do-backupsection', '' );}
 if ( !get_option('dh-do-retain')) {update_option( 'dh-do-retain', '15' );}
-if ( !get_option('dh-do-logging')) {update_option( 'dh-do-logging', 'no' );}
+if ( !get_option('dh-do-logging')) {update_option( 'dh-do-logging', 'off' );}
 
 // Shortcode
 if ( get_option('dh-do-bucketup') && (get_option('dh-do-bucketup') != "XXXX") && !is_null(get_option('dh-do-bucketup')) ) {

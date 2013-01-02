@@ -41,7 +41,8 @@ if ( !defined( 'WP_UNINSTALL_PLUGIN' ) )
                     delete_option( 'dh-do-section' );
                     delete_option( 'dh-do-uploader' );
                     delete_option( 'dh-do-uploadview' );
-	        }
+                    delete_option( 'dh-do-logging' );
+            }
 	        restore_current_blog();
 	    }
 	} else {
@@ -56,4 +57,5 @@ if ( !defined( 'WP_UNINSTALL_PLUGIN' ) )
         delete_option( 'dh-do-section' );
         delete_option( 'dh-do-uploader' );
         delete_option( 'dh-do-uploadview' );
+        delete_option( 'dh-do-logging' );
 }

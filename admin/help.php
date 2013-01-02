@@ -44,7 +44,8 @@ if ($screen->id == 'toplevel_page_dreamobjects-menu') {
         
         '<p><a href="http://dreamhost.com/cloud/dreamobjects/">' . __('DreamObjects Homepage', 'dreamobjects' ) . '</a></p>' .
         '<p><a href="http://wiki.dreamhost.com/DreamObjects_Overview">' . __('Overview', 'dreamobjects' ) . '</a></p>' .
-        '<p><a href="http://docs.dreamobjects.net/">' . __('API', 'dreamobjects' ) . '</a></p>'
+        '<p><a href="http://docs.dreamobjects.net/">' . __('API', 'dreamobjects' ) . '</a></p>' .
+        '<p><a href="http://wordpress.org/support/plugin/dreamobjects">' . __('Get Help', 'dreamobjects' ) . '</a></p>'
         );
 
     // Setup
