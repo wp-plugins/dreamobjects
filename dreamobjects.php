@@ -4,7 +4,7 @@
 Plugin Name: DreamObjects Connection
 Plugin URI: https://github.com/Ipstenu/dreamobjects
 Description: Connect your WordPress install to your DreamHost DreamObjects buckets.
-Version: 2.3
+Version: 2.2
 Author: Mika Epstein
 Author URI: http://ipstenu.org/
 
@@ -31,7 +31,7 @@ Copyright 2012 Mika Epstein (email: ipstenu@ipstenu.org)
  * @package dh-do-backups
  */
 
-require_once dirname(__FILE__) . '/admin/defines.php';
+require_once dirname(__FILE__) . '/lib/defines.php';
 
 class DHDO {
     // INIT - hooking into this lets us run things when a page is hit.
@@ -59,19 +59,33 @@ class DHDO {
 	        else
 	           {add_action('admin_notices', array('DHDO','newBucketError'));}
 	       }
-	       
-	    // CHECK LOGGING
+
+		// RESET
+        if ( current_user_can('manage_options') && isset($_POST['do-do-reset']) ) {
+            check_admin_referer( 'update-options');
+            // I wish I could call uninstall.php here and not have TWO places to keep track of, but damn it...
+            delete_option( 'dh-do-backupsection' );
+            delete_option( 'dh-do-bucket' );
+            delete_option( 'dh-do-bucketcdn' );
+            delete_option( 'dh-do-bucketup' );
+            delete_option( 'dh-do-cdn' );
+            delete_option( 'dh-do-key' );
+            delete_option( 'dh-do-schedule' );
+            delete_option( 'dh-do-secretkey' );
+            delete_option( 'dh-do-section' );
+            delete_option( 'dh-do-uploader' );
+            delete_option( 'dh-do-uploadview' );
+	        DHDO::logger('reset');
+	       }
+
+	    // LOGGER: Wipe logger if blank
 	    if ( current_user_can('manage_options') && isset($_POST['dhdo-logchange']) && $_POST['dhdo-logchange'] == 'Y' ) {
             check_admin_referer( 'update-options');
-            if (isset($_POST['dh-do-logging'])) {
-                $debugmode = $_POST['dh-do-logging'];
-                DHDO::logger('Logging enabled.');
-            } else {
-                $debugmode = 'off';
+            if ( !isset($_POST['dh-do-logging'])) {
                 DHDO::logger('reset');
             }
-            update_option( 'dh-do-logging', $debugmode );
-        }
+        }       
+
 
         // UPLOADER
         if( current_user_can('manage_options') && isset($_POST['Submit']) && isset($_FILES['theFile']) && $_GET['page'] ==

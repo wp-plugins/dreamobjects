@@ -1,6 +1,6 @@
 === DreamObjects Connection ===
 Contributors: Ipstenu, DanCoulter
-Tags: cloud, dreamhost, dreamobjects
+Tags: cloud, dreamhost, dreamobjects, backup
 Requires at least: 3.4
 Tested up to: 3.5
 Stable tag: 2.2
@@ -155,6 +155,14 @@ That's actually not an error. WordPress kicks off cron jobs when someone visits 
 
 You can enable logging on the main DreamObjects screen. This is intended to be temporary (i.e. for debugging weird issues) rather than something you leave on forever. If you turn off logging, the log wipes itself for your protection.
 
+<strong>Nothings happening when I press the backup ASAP button.</strong>
+
+First turn on logging, then run it again. If it gives output, then it's running.
+
+Second, try <em>just</em> backing up SQL. You may have a very large site, which has known to be problematic.
+
+Then log in via SSH and run 'wp dreamobjects backup' to see if that works.
+
 == Screenshots ==
 1. DreamObjects Private Key
 1. Your DreamObjects Public Key
@@ -170,6 +178,8 @@ Jan 3, 2012 by Ipstenu
 
 * Optional logging (good for debugging)
 * No longer takes a backup right away when saving settings (good for testing lots of stuff)
+* Hiding keys if set for security
+* Reset option (wipes all settings)
 
 = Version 2.2 =
 Dec 30, 2012 by Ipstenu

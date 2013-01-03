@@ -22,30 +22,6 @@ if ( !defined( 'WP_UNINSTALL_PLUGIN' ) )
 	exit ();
 
 // Deregister
-
-	if (is_multisite()) {
-	    global $wpdb;
-	    $blogs = $wpdb->get_results("SELECT blog_id FROM {$wpdb->blogs}", ARRAY_A);
-	    if ($blogs) {
-	        foreach($blogs as $blog) {
-	            switch_to_blog($blog['blog_id']);
-
-                    delete_option( 'dh-do-backupsection' );
-                    delete_option( 'dh-do-bucket' );
-                    delete_option( 'dh-do-bucketcdn' );
-                    delete_option( 'dh-do-bucketup' );
-                    delete_option( 'dh-do-cdn' );
-                    delete_option( 'dh-do-key' );
-                    delete_option( 'dh-do-schedule' );
-                    delete_option( 'dh-do-secretkey' );
-                    delete_option( 'dh-do-section' );
-                    delete_option( 'dh-do-uploader' );
-                    delete_option( 'dh-do-uploadview' );
-                    delete_option( 'dh-do-logging' );
-            }
-	        restore_current_blog();
-	    }
-	} else {
         delete_option( 'dh-do-backupsection' );
         delete_option( 'dh-do-bucket' );
         delete_option( 'dh-do-bucketcdn' );
@@ -58,4 +34,3 @@ if ( !defined( 'WP_UNINSTALL_PLUGIN' ) )
         delete_option( 'dh-do-uploader' );
         delete_option( 'dh-do-uploadview' );
         delete_option( 'dh-do-logging' );
-}
