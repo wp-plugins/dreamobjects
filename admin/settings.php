@@ -118,6 +118,14 @@ include_once (PLUGIN_DIR . '/lib/S3.php');
         <p class="submit"><input class='button-secondary' type='Submit' name='logging' value='<?php _e("Configure Logging", dreamobjects); ?>' id='submitbutton' /></p>
     </form>
     <?php
+    if ( get_option('dh-do-logging') == 'on' ) {
+        ?>
+            <p><?php _e('Your logfile is located at ', dreamobjects); ?><a href="<?php echo plugins_url( 'debug.txt' , dirname(__FILE__) );?>"><?php echo plugins_url( 'debug.txt' , dirname(__FILE__) );?></a></p>
+        <?php
+    }
+    ?>
+    
+    <?php
     
 else:
 
