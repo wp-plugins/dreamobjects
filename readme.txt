@@ -31,6 +31,7 @@ Well now that we've gotten the sales-pitch out of the way, DreamObjects Connecti
 * CDN (when available)
 * Better <code>[dreamobjects]</code> support for folders
 * Multipart file uploads to avoid large file upload problems (either get <a href="http://docs.amazonwebservices.com/AmazonS3/latest/dev/LLuploadFilePHP.html">multipart fileupload</a> working or <a href="http://superuser.com/questions/336219/how-do-i-split-a-zip-file-into-multiple-segments">split the zip</a>)
+* Option to email results (if logging, email log? Have to split up by attempt for that)
 
 == Installation ==
 
