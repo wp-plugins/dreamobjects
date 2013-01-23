@@ -209,6 +209,7 @@ class DHDO {
         
         // And me DB!
         if ( in_array('database', $sections) ) {
+            set_time_limit(90);
             $tables = $wpdb->get_col("SHOW TABLES LIKE '" . $wpdb->prefix . "%'");
             $result = shell_exec('mysqldump --single-transaction -h ' . DB_HOST . ' -u ' . DB_USER . ' --password="' . DB_PASSWORD . '" ' . DB_NAME . ' ' . implode(' ', $tables) . ' > ' .  WP_CONTENT_DIR . '/upgrade/dreamobject-db-backup.sql');
             $sqlfile = WP_CONTENT_DIR . '/upgrade/dreamobject-db-backup.sql';
@@ -219,6 +220,7 @@ class DHDO {
         }
         
         if ( !empty($backups) ) {
+            set_time_limit(180); 
             DHDO::logger('Creating zip file ...');
             $zip->create($backups);
             DHDO::logger('Calculating zip file size ...');
@@ -240,6 +242,8 @@ class DHDO {
             $newname = $url . '/' . date_i18n('Y-m-d-His', current_time('timestamp')) . '.zip';
             
             DHDO::logger('New filename '. $newname .'.');
+            set_time_limit(180); 
+            //$s3->debug_mode = true;
             $mpupload = $s3->create_mpu_object($bucket, $newname, array(
                         'fileUpload'  => $file,
                         'contentType' => 'application/zip',
@@ -263,7 +267,6 @@ class DHDO {
                 @unlink($sqlfile);
                 DHDO::logger('Deleting SQL file: '.$sqlfile.' ...');
             }
-            DHDO::logger('Backup Complete.');
         }
         
         // Cleanup Old Backups
@@ -289,6 +292,8 @@ class DHDO {
                 }
             }
         }
+        DHDO::logger('Backup Complete.');
+        DHDO::logger('');
     }
     function cron_schedules($schedules) {
         $schedules['daily'] = array('interval'=>86400, 'display' => 'Once Daily');
