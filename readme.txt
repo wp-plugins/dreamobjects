@@ -149,6 +149,11 @@ If you have <a href="https://github.com/wp-cli/wp-cli#what-is-wp-cli">wp-cli</a>
 That runs an immediate backup and is great if you're going to, say, upgrade WP. Then you backup, upgrade your site, and everything is happy!
 
 = Errors =
+
+<strong>It's reporting page not found when I access the pages</strong>
+
+Make sure you're on PHP 5.3. There's a weird issue with 5.4, I'm working on it.
+
 <strong>Can I see a log of what happens?</strong>
 
 You can enable logging on the main DreamObjects screen. This is intended to be temporary (i.e. for debugging weird issues) rather than something you leave on forever. If you turn off logging, the log wipes itself for your protection.
