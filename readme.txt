@@ -214,13 +214,13 @@ Then log in via SSH and run 'wp dreamobjects backup' to see if that works.
 
 == Changelog ==
 
-= 3.3 =
+= Version 3.3 =
 June 24, 2013 by Ipstenu
 
 * Changing how the backup is done to make it smaller but also to support more configurations. Now it only backs up wp-content.
 * Increased timeouts for SQL
 
-= 3.2.1 =
+= Version 3.2.1 =
 Mar 28, 2013 by Ipstenu
 
 * Dropping support for PHP 5.2, since AWSSDK did it first. It's not me, Mom!
