@@ -3,7 +3,7 @@ Contributors: Ipstenu, DanCoulter
 Tags: cloud, dreamhost, dreamobjects, backup
 Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 3.2.2
+Stable tag: 3.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -57,13 +57,19 @@ Well now that we've gotten the sales-pitch out of the way, DreamObjects Connecti
 
 DreamObjects Connection connects your WordPress site to your DreamObjects cloud storage, allowing you to upload files directly to your cloud, or automatically store backups.
 
+<strong>What does it backup?</strong>
+
+Your database and your wp-content folder.
+
+In a perfect world it would also backup your wp-config.php and .htaccess, but those are harder to grab since there aren't constant locations.
+
 <strong>Do you work for DreamHost?</strong>
 
 Yes, but this isn't an official DreamHost plugin at this time. It just works.
 
 <strong>Do I have to host my website on DreamHost?</strong>
 
-No, but it's unsupported. 
+No, but using it anywhere else is unsupported. 
 
 You have to use Dream<em>Objects</em>, which belongs to Dream<em>Host</em>. This plugin was built on and specifically for DreamHost servers, so I can give you no assurance it'll work on other hosts. 
 
@@ -208,6 +214,12 @@ Then log in via SSH and run 'wp dreamobjects backup' to see if that works.
 
 == Changelog ==
 
+= 3.3 =
+June 24, 2013 by Ipstenu
+
+* Changing how the backup is done to make it smaller but also to support more configurations. Now it only backs up wp-content.
+* Increased timeouts for SQL
+
 = 3.2.1 =
 Mar 28, 2013 by Ipstenu
 
@@ -294,4 +306,4 @@ Sept 2012, by Ipstenu
 * Saving temp files to upgrade (vs it's own folder)
 
 == Upgrade notice ==
-3.2 is a requirement if you want to use PHP 5.4
+PHP 5.2 is no longer supported. Also now only wp-content/uploads is backed up (in the effort of making this smaller)
