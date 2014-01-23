@@ -3,7 +3,7 @@ Contributors: Ipstenu, DanCoulter
 Tags: cloud, dreamhost, dreamobjects, backup
 Requires at least: 3.4
 Tested up to: 3.8
-Stable tag: 3.4.1
+Stable tag: 3.4.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -220,6 +220,12 @@ Then log in via SSH and run 'wp dreamobjects backup' to see if that works.
 
 == Changelog ==
 
+= 3.4.2 = 
+Jan 23, 2014 by Ipstenu
+
+* AWS was being picky and doing things that users don't care about. (<a href="http://wordpress.org/support/topic/log-is-complaining?replies=2#post-5146902">Props @renoirb</a>)
+* Cleaned up some PHP 5.4 functions
+
 = 3.4.1 = 
 Nov 21, 2013 by Ipstenu
 
@@ -329,3 +335,4 @@ Sept 2012, by Ipstenu
 
 == Upgrade notice ==
 PHP 5.2 is no longer supported. Also now only wp-content/uploads is backed up (in the effort of making this smaller)
+
