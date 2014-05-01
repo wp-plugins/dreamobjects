@@ -34,12 +34,15 @@ class DHDOSET {
     public static function add_settings_page() {
         load_plugin_textdomain(dreamobjects, DHDO_PLUGIN_DIR . 'i18n', 'i18n');
         add_action('admin_init', array('DHDOSET', 'add_register_settings'));
-        add_menu_page(__('DreamObjects Settings', 'dreamobjects'), __('DreamObjects', 'dreamobjects'), 'manage_options', 'dreamobjects-menu', array('DHDOSET', 'settings_page'), plugins_url('dreamobjects/images/dreamobj-color.png'));
+        add_menu_page(__('DreamObjects Settings', 'dreamobjects'), __('DreamObjects', 'dreamobjects'), 'manage_options', 'dreamobjects-menu', array('DHDOSET', 'settings_page'), 'dashicons-backup' );
         
         if ( get_option('dh-do-key') && get_option('dh-do-secretkey') ) {
             add_submenu_page('dreamobjects-menu', __('Backups', 'dreamobjects'), __('Backups', 'dreamobjects'), 'manage_options', 'dreamobjects-menu-backup', array('DHDOSET', 'backup_page'));
-            add_submenu_page('dreamobjects-menu', __('Uploader', 'dreamobjects'), __('Uploader', 'dreamobjects'), 'upload_files', 'dreamobjects-menu-uploader', array('DHDOSET', 'uploader_page'));
-            // add_submenu_page('dreamobjects-menu', __('CDN', 'dreamobjects'), __('CDN', 'dreamobjects'), 'manage_options', 'dreamobjects-menu-cdn', array('DHDO', 'cdn_page'));           
+            
+            // If you don't have uploader setup, don't show it. We're getting rid of this.
+            if ( get_option('dh-do-bucketup') && (get_option('dh-do-bucketup') != "XXXX") && !is_null(get_option('dh-do-bucketup')) ) {
+	            add_submenu_page('dreamobjects-menu', __('Uploader', 'dreamobjects'), __('Uploader', 'dreamobjects'), 'upload_files', 'dreamobjects-menu-uploader', array('DHDOSET', 'uploader_page'));
+	        }
         }
     }
 
@@ -49,11 +52,12 @@ class DHDOSET {
     }
     
     public static function  backup_page() {
-        include_once( DHDO_PLUGIN_DIR . '/admin/backups.php'); // Backup Settings
-    }
-    
-    public static function  cdn_page() {
-        include_once( DHDO_PLUGIN_DIR . '/admin/cdn.php'); // CDN Settings (coming ... eventually)
+        if ( get_option('dh-do-boto') == 'yes' ) {
+            include_once( DHDO_PLUGIN_DIR . '/admin/backups-boto.php'); // Backup Settings
+        }
+        else {
+            include_once( DHDO_PLUGIN_DIR . '/admin/backups.php'); // Backup Settings
+        }
     }
 
     public static function  uploader_page() {
@@ -212,6 +216,9 @@ class DHDOSET {
             <p class="description"><?php echo $nextbackup; ?></p>
             <?php }
     	}
+    	
+    // Backup BOTO Settings
+        add_settings_section( 'backupboto_id', __('Settings', 'dreamobjects'), 'backupboto_callback', 'dh-do-backupboto_page' );
 
     // Reset Settings
         register_setting( 'dh-do-reset-settings', 'dh-do-reset');

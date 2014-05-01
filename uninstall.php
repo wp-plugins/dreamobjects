@@ -24,9 +24,7 @@ if ( !defined( 'WP_UNINSTALL_PLUGIN' ) )
 // Deregister
     delete_option( 'dh-do-backupsection' );
     delete_option( 'dh-do-bucket' );
-    delete_option( 'dh-do-bucketcdn' );
     delete_option( 'dh-do-bucketup' );
-    delete_option( 'dh-do-cdn' );
     delete_option( 'dh-do-key' );
     delete_option( 'dh-do-schedule' );
     delete_option( 'dh-do-secretkey' );
@@ -35,6 +33,7 @@ if ( !defined( 'WP_UNINSTALL_PLUGIN' ) )
     delete_option( 'dh-do-uploadview' );
     delete_option( 'dh-do-logging' );
     delete_option( 'dh-do-debugging' );
+    delete_option( 'dh-do-boto' );
 
 // Unschedule
     wp_clear_scheduled_hook( 'dh-do-backupnow');
