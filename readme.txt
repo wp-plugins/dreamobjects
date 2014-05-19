@@ -226,7 +226,7 @@ Then log in via SSH and run 'wp dreamobjects backup' to see if that works.
 May 1, 2014 by Ipstenu
 
 * Beginning deprecation of the uploader. If you're using it, it'll stay.
-* Changing images to CSS
+* Changing images to CSS.
 
 = 3.4.2 = 
 Jan 23, 2014 by Ipstenu
