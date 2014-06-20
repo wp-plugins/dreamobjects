@@ -55,15 +55,21 @@ if ( is_admin() && ( !defined( 'DOING_AJAX' ) || !DOING_AJAX ) ) {
 	}
 	elseif ( !( $curl['features'] & CURL_VERSION_LIBZ ) ) {
 		dreamobjects_core_incompatibile( __( 'The official Amazon Web Services SDK, which DreamObjects relies on, requires that cURL is compiled with zlib. The plugin has now disabled itself.', 'dreamobjects' ) );
+	} elseif ( is_multisite() ) {
+		dreamobjects_core_incompatibile( __( 'Sorry, but DreamObjects is not currently compatible with WordPress Multisite, and should not be used. The plugin has now disabled itself.', 'dreamobjects' ) );
 	}
 }
  
-require_once dirname(__FILE__) . '/lib/defines.php';
-require_once dirname(__FILE__) . '/lib/dhdo.php';
-require_once dirname(__FILE__) . '/lib/messages.php';
-require_once dirname(__FILE__) . '/lib/settings.php';
+require_once 'lib/defines.php';
+require_once 'lib/dhdo.php';
+require_once 'lib/messages.php';
+require_once 'lib/settings.php';
+
+if (false === class_exists('Symfony\Component\ClassLoader\UniversalClassLoader', false)) {
+	require_once 'aws/aws-autoloader.php';
+}
 
 // WP-CLI
 if ( defined('WP_CLI') && WP_CLI ) {
-	include( dirname(__FILE__) . '/lib/wp-cli.php' );
+	include( 'lib/wp-cli.php' );
 }

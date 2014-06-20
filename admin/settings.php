@@ -20,10 +20,6 @@
 if (!defined('ABSPATH')) {
     die();
 }
-
-
-
-include_once (DHDO_PLUGIN_DIR . '/AWSSDKforPHP/sdk.class.php');
 		$sections = get_option('dh-do-backupsection');
 		if ( !$sections ) {
 			$sections = array();
@@ -40,7 +36,7 @@ include_once (DHDO_PLUGIN_DIR . '/AWSSDKforPHP/sdk.class.php');
 
 				<p><?php echo __('DreamObjects&#153; is an inexpensive, scalable object storage service that was developed from the ground up to provide a reliable, flexible cloud storage solution for entrepreneurs and developers. It provides a perfect, scalable storage solution for your WordPress site.', dreamobjects); ?></p>
 
-<?php if ( get_option('dh-do-key') && get_option('dh-do-secretkey') ) : ?>
+<?php if ( get_option('dh-do-key') && get_option('dh-do-secretkey') ) { ?>
 
     <h3><?php echo __('Debug Logging', dreamobjects); ?></h3>
 
@@ -54,13 +50,6 @@ include_once (DHDO_PLUGIN_DIR . '/AWSSDKforPHP/sdk.class.php');
         <?php
     }
     ?>
-    <?php
-        if ( get_option('dh-do-logging') == 'on' ) {
-            ?><p><input type="checkbox" name="dh-do-debugging" <?php checked( get_option('dh-do-debugging') == 'on',true); ?> /> <?php echo __('Enable verbose debugging (if checked)', dreamobjects); ?> &mdash; <span class="description"><?php echo __('This will only provide output via the WP-CLI interface.', dreamobjects); ?></span></p>
-            <input type="hidden" name="dhdo-debugchange" value="Y">
-            <input type="hidden" name="page_options" value="dh-do-debugging" />
-        <?php }
-        ?>
         <input type="hidden" name="dhdo-logchange" value="Y">
         <input type="hidden" name="page_options" value="dh-do-logging" />
         <p class="submit"><input class='button-secondary' type='Submit' name='logging' value='<?php echo __("Configure Logging", dreamobjects); ?>' id='submitbutton' /></p>
@@ -78,7 +67,7 @@ include_once (DHDO_PLUGIN_DIR . '/AWSSDKforPHP/sdk.class.php');
     
     <?php
     
-else:
+} else {
 
     ?>
      				<form method="post" action="options.php">
@@ -88,9 +77,7 @@ else:
                         submit_button();
 					?>
                     </form>
-
     <?php
-
-endif;
+} 
 ?>
 			</div>
