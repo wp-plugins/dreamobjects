@@ -23,6 +23,7 @@ Well now that we've gotten the sales-pitch out of the way, DreamObjects Connecti
 * Provides <a href="https://github.com/wp-cli/wp-cli#what-is-wp-cli">wp-cli</a> hooks to do the same
 
 = To Do =
+* Better failure on large sites
 * Offer syncing backup as an alternative (see <a href="http://blogs.aws.amazon.com/php/post/Tx2W9JAA7RXVOXA/Syncing-Data-with-Amazon-S3">Syncing Data with Amazon S3</a>
 * Option to email results (if logging, email log? Have to split up by attempt for that)
 
@@ -84,7 +85,7 @@ There are a few things at play here:
 
 In a perfect world, you have enough to cope with all that. When you have a very large site, however, not so much. You can try increasing your <a href="http://wiki.dreamhost.com/PHP.ini#Increasing_the_PHP_Memory_Limit">PHP memorylimit</a>, or if your site really is that big, consider a VPS. Remember you're using WordPress to run backups here, so you're at the mercy of a middle-man. Just because PHP has a hard limit of 2G doesn't mean it'll even get that far.
 
-If this is still happening, turn on debugging and check the log. If the log stalls on creating the zip, then you've hit the memory wall. It's possible to increase your memory limit via PHP, <em>however</em> doing this on a shared server means you're probably getting too big for this sort of backup solution in the first place. If your site is over 500megs and you're still on shared, you need to seriously think about your future. This will be much less of an issue on VPS and dedi boxes, where you don't have the same limits.
+I have, personally, verified a 250MB zip file, with no timeouts, no server thrashing, and no PHP errors, so if this is still happening, turn on debugging and check the log. If the log stalls on creating the zip, then you've hit the memory wall. It's possible to increase your memory limit via PHP, <em>however</em> doing this on a shared server means you're probably getting too big for this sort of backup solution in the first place. If your site is over 500megs and you're still on shared, you need to seriously think about your future. This will be much less of an issue on VPS and dedi boxes, where you don't have the same limits.
 
 <strong>Where's the Database in the zip?</strong>
 
@@ -139,11 +140,15 @@ wp dreamobjects backup
 wp dreamobjects resetlog
 </pre>
 
-The 'backup' command runs an immediate backup, while the 'resetlog' command wipes your debug log. Most of the time those are used for testing.
+The 'backup' command runs an immediate backup, while the 'resetlog' command wipes your debug log.
 
 <strong>Why doesn't it have a CDN?</strong>
 
 Because we went with a slightly different feature with the CDN, and as such it's best as a separate plugin. Don't worry, they'll play nice!
+
+<strong>Where did the uploader go!?</strong>
+
+Away. It was never really used well and the CDN plugin will handle this much better. WP's just not the best tool for the job there.
 
 = Errors =
 
@@ -173,14 +178,20 @@ You can also log in via SSH and run 'wp dreamobjects backup' to see if that work
 
 = 3.5 = 
 
-June 20, 2014 by Ipstenu
+XXX by Ipstenu
 
-* Changed SDK to newest version: 2.6.8 (<a href="http://blogs.aws.amazon.com/php/post/TxUO6WG0S1NQE2/Release-AWS-SDK-for-PHP-Version-2-6-8">official release notes</a>)
-* Improved multipart uploads, which should allow for larger files in a better way
+* Changed SDK to newest version: 2.6.9 (<a href="http://blogs.aws.amazon.com/php/post/Tx2Q8T2MTERKJS4/Release-AWS-SDK-for-PHP-Version-2-6-9">official release notes</a>)
+* Added support for ZipArchive, with graceful fallback to PclZip if needed
+* `/cache/` folder is not backed up anymore
+* Backs up `wp-config.php` sometimes... (if you put it in a weird place, I'm not responsible)
+* Backup ignores `wp-content` if it's nearly 2G (blame PHP, not me!)
+* Zip has shorter paths (unzipped, it's /dreamobjects-backup/wp-content/etc)
+* Improved multipart uploads, which should allow for large files in a better way
 * Force disable on Multisite, which you shouldn't be using since it breaks six ways from Sunday anyway
-* Security tightening (hiding things)
+* Security tightening: hiding things, making things harder for people to run, safer command usage
 * Improved debug logging
-* New wp-cli command: wp dreamobjects resetlog
+* Removed uploader for both security and support reasons. It was bad and I feel bad.
+* New wp-cli command: `wp dreamobjects resetlog` (resets the debug log)
 
 = 3.4.3 =
 May 1, 2014 by Ipstenu
@@ -302,4 +313,6 @@ Sept 2012, by Ipstenu
 * Saving temp files to upgrade (vs it's own folder)
 
 == Upgrade notice ==
+This is a MAJOR UPGRADE to the plugin. Please read the changelog.
+
 The separate uploader has been removed in version 3.5 and up and will not be returning.
